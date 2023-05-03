@@ -3,6 +3,11 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Auth\AuthenticationException;
+use Exception;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +31,42 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Exception|Throwable $exception)
+    {
+        return $this->handleException($request, $exception);
+    }
+
+    public function handleException($request, Exception $exception)
+    {
+
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            return $this->errorResponse('Invalid request', 405);
+        }
+
+        if ($exception instanceof NotFoundHttpException) {
+            return $this->errorResponse('Unable to find resource', 404);
+        }
+
+        if ($exception instanceof HttpException) {
+            return $this->errorResponse($exception->getMessage(), $exception->getStatusCode());
+        }
+
+        return $this->errorResponse('Unexpected Exception', 500);
+
+    }
+
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        return response()->json(['error' => 'Unauthenticated.'], 401);
+    }
+
+    private function errorResponse($message = null, $code)
+    {
+        return response()->json([
+            'status'=>'Error',
+            'message' => $message
+        ], $code);
     }
 }
