@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('city');
             $table->string('state');
             $table->string('zip_code');
-            $table->string('avg_rating');
+            $table->float('avg_rating');
             $table->unsignedBigInteger('business_category_id');
             $table->foreign('business_category_id')->references('id')->on('business_categories');
             $table->timestamps();
