@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Auth\AuthenticationException;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -35,6 +36,7 @@ class Handler extends ExceptionHandler
 
     public function render($request, Exception|Throwable $exception)
     {
+        Log::error($exception);
         return $this->handleException($request, $exception);
     }
 
@@ -53,7 +55,7 @@ class Handler extends ExceptionHandler
             return $this->errorResponse($exception->getMessage(), $exception->getStatusCode());
         }
 
-        return $this->errorResponse('Unexpected Exception', 500);
+        return $this->errorResponse($exception->getMessage(), 500);
 
     }
 

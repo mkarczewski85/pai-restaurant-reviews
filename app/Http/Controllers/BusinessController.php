@@ -20,9 +20,9 @@ class BusinessController extends Controller
 
     public function store(Request $request)
     {
-        $article = Business::create($request->all());
+        $business = Business::create($request->all());
 
-        return response()->json($article);
+        return response()->json($business);
     }
 
     public function update(Request $request, Business $business)
