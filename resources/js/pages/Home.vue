@@ -1,10 +1,10 @@
 <template>
     <div class="w-6/12 p-10 mx-auto">
         <div class="flex justify-between">
-            <h1 class="text-2xl"> App </h1>
-            <span class="capitalize">Welcome {{ user && user.name }}, <button
+            <h1 class="text-2xl"> Aplikacja </h1>
+            <span class="capitalize">Witaj {{ user && user.name }}, <button
                 class="text-orange-500 underline hover:no-underline rounded-md"
-                @click="handleLogout">Logout</button></span>
+                @click="handleLogout">Wyloguj</button></span>
         </div>
     </div>
 </template>
