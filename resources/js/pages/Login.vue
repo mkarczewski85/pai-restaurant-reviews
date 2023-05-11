@@ -69,9 +69,9 @@ export default {
         })
         const handleLogin = async () => {
             try {
-                const result = await axios.post('/api/auth/login', form)
-                if (result.data.status && result.data.token) {
-                    localStorage.setItem('APP_USER_TOKEN', result.data.token)
+                const res = await axios.post('/api/auth/login', form)
+                if (res.data.status && res.data.token) {
+                    localStorage.setItem('APP_USER_TOKEN', res.data.token)
                     await router.push('home')
                 }
             } catch (e) {

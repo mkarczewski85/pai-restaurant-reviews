@@ -82,9 +82,9 @@ export default {
         const handleSubmit = async (evt) => {
             evt.preventDefault()
             try {
-                const result = await axios.post('/api/auth/register', form);
-                if (result.status && result.token) {
-                    localStorage.setItem('APP_USER_TOKEN', result.token)
+                const res = await axios.post('/api/auth/register', form);
+                if (res.data.status && res.data.token) {
+                    localStorage.setItem('APP_USER_TOKEN', res.data.token)
                     await router.push('home')
                 }
             } catch (e) {
