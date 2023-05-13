@@ -3,64 +3,43 @@
         <!-- component -->
         <div
             class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-2 flex flex-col">
-            <h1 class="text-gray-600 py-5 font-bold text-3xl"> Zarejestruj się: </h1>
-            <ul class="list-disc text-red-400" v-for="(value, index) in errors" :key="index">
-                <li>{{ value[0] }}</li>
-            </ul>
-            <form method="post" @submit="handleSubmit">
-                <div class="mb-4 mt-3">
-                    <label
-                        class="block text-grey-darker text-sm font-bold mb-2"
-                        for="name">
-                        Imię
-                    </label>
-                    <input
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-                        id="name"
-                        type="text"
-                        required
-                        v-model="form.name"/>
-                </div>
-                <div class="mb-4">
-                    <label
-                        class="block text-grey-darker text-sm font-bold mb-2"
-                        for="email">
-                        Adres email
-                    </label>
-                    <input
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-                        type="email"
-                        id="email"
-                        required
-                        v-model="form.email"/>
-                </div>
-                <div class="mb-4">
-                    <label
-                        class="block text-grey-darker text-sm font-bold mb-2"
-                        for="password">
-                        Hasło
-                    </label>
-                    <input
-                        class="shadow appearance-none border border-red rounded w-full py-2 px-3 text-grey-darker mb-3"
-                        id="password"
-                        type="password"
-                        required
-                        v-model="form.password"/>
-                    <!-- <p class="text-red text-xs italic">Please choose a password.</p> -->
-                </div>
-                <div class="flex items-center justify-between">
-                    <button
-                        class="bg-blue-500 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded"
-                        type="submit">
-                        Zarejestruj
-                    </button>
-                    <router-link
-                        class="inline-block align-baseline font-bold text-sm text-blue hover:text-blue-darker"
-                        to="/">
-                        Logowanie
-                    </router-link>
-                </div>
-            </form>
+            <h1 class="text-gray-600 py-5 font-bold text-3xl"> Rejestracja konta </h1>
+            <v-alert
+                type="error"
+                v-if="errors"
+            >{{ errors }}</v-alert>
+            <br>
+            <v-form @submit.prevent="handleSubmit">
+                <v-text-field
+                    label="Imię"
+                    v-model="form.name"
+                    :rules="nameRules"
+                    type="name"
+                    required
+                ></v-text-field>
+
+                <v-text-field
+                    label="Email"
+                    v-model="form.email"
+                    :rules="emailRules"
+                    type="email"
+                    required
+                ></v-text-field>
+
+                <v-text-field
+                    label="Hasło"
+                    v-model="form.password"
+                    :rules="passwordRules"
+                    type="password"
+                    required
+                ></v-text-field>
+
+                <v-btn color="primary" type="submit">Zarejestruj</v-btn>
+
+                <p class="mt-4">Masz już konto?
+                    <router-link to="login" class="link">Zaloguj się</router-link>
+                </p>
+            </v-form>
         </div>
     </div>
 </template>
@@ -79,6 +58,40 @@ export default {
             email: '',
             password: '',
         })
+
+        const emailRules = [
+            value => {
+                if (value) return true
+                return 'Pole wymagane.'
+            },
+            value => {
+                if (/.+@.+\..+/.test(value)) return true
+                return 'Nieprawidłowy adres email.'
+            },
+        ];
+
+        const passwordRules = [
+            value => {
+                if (value.length >= 6) return true
+                return 'Hasło musi mieć min. 6 znaków.'
+            },
+            value => {
+                if (value) return true
+                return 'Pole wymagane.'
+            },
+        ];
+
+        const nameRules = [
+            value => {
+                if (value.length >= 3) return true
+                return 'Imię musi mieć min. 3 znaki.'
+            },
+            value => {
+                if (value) return true
+                return 'Pole wymagane.'
+            },
+        ];
+
         const handleSubmit = async (evt) => {
             evt.preventDefault()
             try {
@@ -89,15 +102,25 @@ export default {
                 }
             } catch (e) {
                 if (e.response.data && e.response.data.errors) {
-                    errors.value = Object.values(e.response.data.errors)
+                    errors.value = Object.values(e.response.data.errors).join('; ')
                 }
             }
         }
         return {
             form,
             errors,
+            emailRules,
+            passwordRules,
+            nameRules,
             handleSubmit,
         }
     }
 }
 </script>
+
+<style>
+.link {
+    color: blue;
+    text-decoration: underline;
+}
+</style>

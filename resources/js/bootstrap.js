@@ -45,6 +45,10 @@ import router from './route'
 const app = createApp(App)
 const vuetify = createVuetify(
     {
+        theme: { defaultTheme: 'light' },
+        fonts: {
+            body: 'Open Sans',
+        },
         icons: {
             defaultSet: 'mdi',
             aliases,
