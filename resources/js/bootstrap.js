@@ -5,6 +5,7 @@
  */
 
 import axios from 'axios';
+
 window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -31,11 +32,29 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     enabledTransports: ['ws', 'wss'],
 // });
 
+import 'vuetify/styles'
+
 import {createApp} from 'vue'
+import {createVuetify} from 'vuetify'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import "@mdi/font/css/materialdesignicons.css";
 
 import App from './App.vue'
 import router from './route'
 
 const app = createApp(App)
+const vuetify = createVuetify(
+    {
+        icons: {
+            defaultSet: 'mdi',
+            aliases,
+            sets: {
+                mdi,
+            },
+        },
+    }
+)
+
 app.use(router)
+app.use(vuetify)
 app.mount("#app")
