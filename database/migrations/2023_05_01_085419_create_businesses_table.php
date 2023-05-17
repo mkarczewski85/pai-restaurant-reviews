@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('state');
             $table->string('zip_code');
             $table->float('avg_rating');
+            $table->integer('total_reviews');
+            $table->integer('price_level');
             $table->unsignedBigInteger('business_category_id');
             $table->foreign('business_category_id')->references('id')->on('business_categories');
             $table->timestamps();

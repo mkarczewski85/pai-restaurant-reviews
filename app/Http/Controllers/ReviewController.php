@@ -15,6 +15,14 @@ class ReviewController extends Controller
         return Review::all();
     }
 
+    public function getBusinessReviews($businessId)
+    {
+        return Review::join('users', 'reviews.user_id', '=', 'users.id')
+            ->select('reviews.*', 'users.name AS author')
+            ->where('business_id', $businessId)
+            ->get();
+    }
+
     public function show(Review $review)
     {
         return $review;
@@ -22,7 +30,7 @@ class ReviewController extends Controller
 
     public function store(Request $request)
     {
-        // create new Review
+        // create new Review.vue
         $review = new Review();
 
         // retrieve logged user context data and set user_id
@@ -34,13 +42,13 @@ class ReviewController extends Controller
         $business = Business::findOrFail($request->business_id);
         $review->business_id = $business->id;
 
-        // fill input fields for Review
+        // fill input fields for Review.vue
         $input = $request->all();
         $review->rating = $input->rating;
         $review->review_text = $input->review_text;
         $review->userful_count = 0;
 
-        // save Review
+        // save Review.vue
         $review>save();
 
         // recalculate avg score for Business and save

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BusinessController;
@@ -32,4 +33,5 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/businesses', [BusinessController::class, 'store']);
     Route::put('/businesses/{business}', [BusinessController::class, 'update']);
     Route::delete('/businesses/{business}', [BusinessController::class, 'delete']);
+    Route::get('businesses/{businessId}/reviews', [ReviewController::class, 'getBusinessReviews']);
 });

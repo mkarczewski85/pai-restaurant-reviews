@@ -8,87 +8,47 @@
         </div>
     </div>
 
-    <v-card
-        :loading="loading"
-        class="mx-auto my-12"
-        max-width="374"
-    >
-        <template v-slot:loader="{ isActive }">
-            <v-progress-linear
-                :active="isActive"
-                color="deep-purple"
-                height="4"
-                indeterminate
-            ></v-progress-linear>
-        </template>
+    <v-container style="overflow-y: auto;">
+        <v-row align="center">
+            <v-col v-for="business in businesses" :key="business.id" cols="4">
+                <BusinessCard :business="business" :showDetails="showDetails">
 
-        <v-img
-            cover
-            height="250"
-            src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-        ></v-img>
+                </BusinessCard>
+            </v-col>
+        </v-row>
+    </v-container>
+    <v-layout class="overflow-visible" style="height: 56px;">
+        <v-bottom-navigation grow>
+            <v-btn value="list">
+                <v-icon>mdi-apps</v-icon>
 
-        <v-card-item>
-            <v-card-title>Cafe Badilico</v-card-title>
-
-            <v-card-subtitle>
-                <span class="me-1">Local Favorite</span>
-
-                <v-icon
-                    color="error"
-                    icon="mdi-fire-circle"
-                    size="small"
-                ></v-icon>
-            </v-card-subtitle>
-        </v-card-item>
-
-        <v-card-text>
-            <v-row
-                align="center"
-                class="mx-0"
-            >
-                <v-rating
-                    :model-value="3"
-                    color="amber"
-                    density="compact"
-                    readonly
-                    size="small"
-                ></v-rating>
-
-                <div class="text-grey ms-4">
-                    4.5 (413)
-                </div>
-            </v-row>
-
-            <div class="my-4 text-subtitle-1">
-                $$ • Italian, Cafe
-            </div>
-
-            <div>Small plates, salads & sandwiches - an intimate setting with 12 indoor seats plus patio seating.</div>
-        </v-card-text>
-
-        <v-divider class="mx-4 mb-1"></v-divider>
-
-        <v-card-actions>
-            <v-btn
-                color="deep-purple-lighten-2"
-                variant="text"
-                @click="review"
-            >
-                Add Review
+                Lista
             </v-btn>
-        </v-card-actions>
-    </v-card>
 
+            <v-btn value="favorites">
+                <v-icon>mdi-heart</v-icon>
+
+                Ulubione
+            </v-btn>
+
+            <v-btn value="reviews">
+                <v-icon>mdi-typewriter</v-icon>
+
+                Moje opinie
+            </v-btn>
+        </v-bottom-navigation>
+    </v-layout>
 </template>
 <script>
 import {ref, onMounted} from 'vue'
 import {createRouter as router, useRouter} from "vue-router";
 import {request} from '../helper'
 import Loader from '../components/Loader.vue';
+import BusinessCard from "@/components/BusinessCard.vue";
 
 export default {
     components: {
+        BusinessCard,
         Loader,
     },
 
@@ -98,7 +58,7 @@ export default {
     }),
 
     methods: {
-        reserve () {
+        reserve() {
             this.loading = true
 
             setTimeout(() => (this.loading = false), 2000)
@@ -107,11 +67,13 @@ export default {
 
     setup() {
         const user = ref()
+        const businesses = ref()
         const isLoading = ref()
 
         let router = useRouter();
         onMounted(() => {
             authentication()
+            retrieveBusinesses()
         });
 
         const authentication = async () => {
@@ -124,16 +86,42 @@ export default {
             }
         }
 
+        const retrieveBusinesses = async () => {
+            isLoading.value = true
+            try {
+                const res = await request('get', '/api/businesses')
+                businesses.value = res.data
+            } catch (e) {
+                await router.push('/')
+            }
+        }
+
         const handleLogout = () => {
             localStorage.removeItem('APP_USER_TOKEN')
             router.push('/')
         }
 
+        const showDetails = (business_id) => {
+            router.push({name: 'businessDetails', params: {id: business_id}})
+        }
+
         return {
             user,
+            businesses,
             isLoading,
             handleLogout,
+            showDetails
         }
     },
 }
 </script>
+
+<style>
+.repeat {
+    display: flex;
+}
+
+.dollar {
+    margin-right: 2px;
+}
+</style>

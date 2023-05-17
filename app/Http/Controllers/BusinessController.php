@@ -10,7 +10,9 @@ class BusinessController extends Controller
 {
     public function index()
     {
-        return Business::all();
+        return Business::join('business_categories', 'businesses.business_category_id', '=', 'business_categories.id')
+            ->select('businesses.*', 'business_categories.name AS category_name')
+            ->get();
     }
 
     public function show(Business $business)
