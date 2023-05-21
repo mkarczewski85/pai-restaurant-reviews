@@ -17,10 +17,21 @@ class ReviewController extends Controller
 
     public function getBusinessReviews($businessId)
     {
+        $user = Auth::user();
         return Review::join('users', 'reviews.user_id', '=', 'users.id')
             ->select('reviews.*', 'users.name AS author')
             ->where('business_id', $businessId)
+            ->where('user_id', '!=', $user->id)
             ->get();
+    }
+
+    public function getMyReview($businessId)
+    {
+        $user = Auth::user();
+        return Review::select('reviews.*')
+            ->where('business_id', $businessId)
+            ->where('user_id', $user->id)
+            ->first();
     }
 
     public function show(Review $review)
@@ -66,10 +77,12 @@ class ReviewController extends Controller
         return response()->json($review);
     }
 
-    public function delete(Review $review)
+    public function deleteMyReview($reviewId)
     {
-        $review->delete();
-
+        $user = Auth::user();
+        Review::where('id', $reviewId)
+            ->where('user_id', $user->id)
+            ->delete();
         return response()->json(null, 204);
     }
 }

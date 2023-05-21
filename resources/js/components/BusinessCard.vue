@@ -53,15 +53,7 @@
                     <span style="display: inline-block;"> • {{ business.category_name }}</span>
                 </div>
             </div>
-
-<!--            <v-banner lines="one" text="..." :stacked="false">-->
-<!--                <template v-slot:text>-->
-<!--                    <div>{{ business.description }}</div>-->
-<!--                </template>-->
-<!--            </v-banner>-->
         </v-card-text>
-
-<!--        <v-divider class="mx-4 mb-1"></v-divider>-->
 
         <v-card-actions>
             <v-btn
@@ -75,6 +67,10 @@
                 variant="text"
                 @click="review">
                 Oceń
+            </v-btn>
+            <v-btn class="ml-auto">
+                <v-icon v-if="business.isFavorite">mdi-heart</v-icon>
+                <v-icon v-else>mdi-heart-outline</v-icon>
             </v-btn>
         </v-card-actions>
     </v-card>

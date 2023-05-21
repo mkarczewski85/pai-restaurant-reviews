@@ -1,0 +1,92 @@
+<template>
+
+    <v-card
+        :loading="loading"
+        class="mx-auto my-12 pt-4">
+        <template v-slot:loader="{ isActive }">
+            <v-progress-linear
+                :active="isActive"
+                color="deep-purple"
+                height="4"
+                indeterminate
+            ></v-progress-linear>
+        </template>
+
+        <v-carousel show-arrows="hover">
+            <v-carousel-item
+                src="https://images.pexels.com/photos/67468/pexels-photo-67468.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                cover
+            ></v-carousel-item>
+
+            <v-carousel-item
+                src="https://images.pexels.com/photos/2074130/pexels-photo-2074130.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                cover
+            ></v-carousel-item>
+
+            <v-carousel-item
+                src="https://images.pexels.com/photos/1484516/pexels-photo-1484516.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                cover
+            ></v-carousel-item>
+        </v-carousel>
+
+        <v-card-item>
+            <v-card-title>{{ businessDetails.name }}</v-card-title>
+
+            <v-card-subtitle>
+                <span class="me-1">{{ businessDetails.address }}, {{ businessDetails.city }}</span>
+            </v-card-subtitle>
+        </v-card-item>
+
+        <v-card-text>
+            <v-row
+                align="center"
+                class="mx-0"
+            >
+                <v-rating
+                    v-model="businessDetails.avg_rating"
+                    color="amber"
+                    density="compact"
+                    readonly
+                    size="small"
+                ></v-rating>
+
+                <div class="text-grey ms-4">
+                    ({{ businessDetails.total_reviews }})
+                </div>
+            </v-row>
+
+            <div class="my-4 text-subtitle-1">
+                <div class="repeat">
+                    <div v-for="n in businessDetails.price_level" :key="n" class="dollar" style="display: inline-block;">
+                        $
+                    </div>
+                    <span style="display: inline-block;"> • {{ businessDetails.category_name }}</span>
+                </div>
+            </div>
+
+            <v-banner lines="default" text="..." :stacked="false">
+                <template v-slot:text>
+                    <div>{{ businessDetails.description }}</div>
+                </template>
+            </v-banner>
+        </v-card-text>
+
+        <v-card-actions>
+            <v-btn
+                icon
+                @click="favorite" class="ml-auto">
+                <v-icon> mdi-heart</v-icon>
+            </v-btn>
+        </v-card-actions>
+
+    </v-card>
+
+</template>
+<script>
+
+export default {
+
+    props: ['businessDetails', 'loading']
+
+}
+</script>
