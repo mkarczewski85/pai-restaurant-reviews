@@ -23,4 +23,13 @@ class Business extends Model
         return $this->hasOne(BusinessCategory::class);
     }
 
+    public function recalculateBusinessStats()
+    {
+        $avgRating = $this->reviews()->avg('rating');
+        $totalReviews = $this->reviews()->count();
+        $this->avg_rating = $avgRating;
+        $this->total_reviews = $totalReviews;
+        $this->save();
+    }
+
 }

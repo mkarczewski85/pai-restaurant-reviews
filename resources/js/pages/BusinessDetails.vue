@@ -5,7 +5,31 @@
         <BusinessDetailsCard :businessDetails="businessDetails" :loading="loading"></BusinessDetailsCard>
 
         <MyReview :myReview="myReview" :deleteFunction="deleteMyReview" v-if="myReview"></MyReview>
-        <NoReview v-else></NoReview>
+        <v-sheet
+            v-else
+            class="d-flex align-center justify-center flex-wrap text-center mx-auto"
+            elevation="4"
+            height="250"
+            rounded
+            max-width="800"
+            width="100%"
+        >
+            <div>
+                <div class="text-h5 font-weight-medium mb-2">
+                    Nie wystawiłeś jeszcze swojej opinii!
+                </div>
+                <v-dialog
+                    v-model="dialog"
+                    persistent
+                    width="1024"
+                >
+                    <template v-slot:activator="{ props }">
+                        <v-btn v-bind="props" prepend-icon="mdi-typewriter" color="primary" class="mt-4">Recenzuj</v-btn>
+                    </template>
+                    <ReviewForm :closeDialog="closeDialog" :handleReviewSubmit="storeMyReview"></ReviewForm>
+                </v-dialog>
+            </div>
+        </v-sheet>
         <Review v-for="review in reviews" :review="review">
 
         </Review>
@@ -23,12 +47,12 @@ import BusinessCard from "@/components/BusinessCard.vue";
 import AppBar from "@/components/AppBar.vue";
 import BusinessDetailsCard from "@/components/BusinessDetailsCard.vue";
 import MyReview from "@/components/MyReview.vue";
-import NoReview from "@/components/NoReview.vue";
+import ReviewForm from "@/components/ReviewForm.vue";
 
 export default {
 
     components: {
-        NoReview,
+        ReviewForm,
         MyReview,
         BusinessDetailsCard,
         BusinessCard,
@@ -43,13 +67,14 @@ export default {
     }),
 
     methods: {
-        reserve () {
+        reserve() {
             this.loading = true
             setTimeout(() => (this.loading = false), 2000)
         },
     },
 
     setup() {
+        const dialog = ref(false)
         const reviews = ref()
         const myReview = ref()
         const businessDetails = ref()
@@ -98,7 +123,7 @@ export default {
 
         const deleteMyReview = async () => {
             try {
-                const res = await request('delete', '/api/my/reviews/' + myReview.value.id)
+                const res = await request('delete', '/api/businesses/' + id + '/my-review')
                 if (res.status === 204) {
                     myReview.value = null;
                 }
@@ -107,12 +132,27 @@ export default {
             }
         }
 
+        const storeMyReview = async (data) => {
+            const res = await request('post', '/api/businesses/' + id + '/my-review', data)
+            if (res.data) {
+                myReview.value = data;
+            }
+            dialog.value = false;
+        }
+
+        const closeDialog = () => {
+            dialog.value = false;
+        }
+
         return {
+            dialog,
             reviews,
             myReview,
             businessDetails,
             isLoading,
-            deleteMyReview
+            deleteMyReview,
+            storeMyReview,
+            closeDialog,
         }
     },
 }

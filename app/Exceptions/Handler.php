@@ -34,13 +34,13 @@ class Handler extends ExceptionHandler
         });
     }
 
-    public function render($request, Exception|Throwable $exception)
+    public function render($request, $exception)
     {
         Log::error($exception);
         return $this->handleException($request, $exception);
     }
 
-    public function handleException($request, Exception $exception)
+    public function handleException($request, $exception)
     {
 
         if ($exception instanceof MethodNotAllowedHttpException) {

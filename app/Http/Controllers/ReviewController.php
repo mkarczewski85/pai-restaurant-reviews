@@ -7,6 +7,7 @@ use App\Models\Business;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ReviewController extends Controller
 {
@@ -39,34 +40,29 @@ class ReviewController extends Controller
         return $review;
     }
 
-    public function store(Request $request)
+    public function storeMyReview(Request $request, $businessId)
     {
         // create new Review.vue
-        $review = new Review();
 
         // retrieve logged user context data and set user_id
         $user = Auth::user();
-        $user_id = $user->id;
-        $review->user_id = $user_id;
 
         // find Business and set business_id or throw ex if not exists
-        $business = Business::findOrFail($request->business_id);
-        $review->business_id = $business->id;
+        $business = Business::findOrFail($businessId);
 
-        // fill input fields for Review.vue
+        // fill input fields for Review
         $input = $request->all();
-        $review->rating = $input->rating;
-        $review->review_text = $input->review_text;
-        $review->userful_count = 0;
 
-        // save Review.vue
-        $review>save();
+        // save Review
+        $review = Review::create([
+            'user_id' => $user->id,
+            'business_id' => $business->id,
+            'rating' => $input['rating'],
+            'review_text' => $input['review_text'],
+            'useful_count' => 0,
+        ]);
 
-        // recalculate avg score for Business and save
-        $avg_rating = $business->reviews()->avg('rating');
-        $business->avg_rating = $avg_rating;
-        $business->save();
-
+        $business->recalculateBusinessStats();
         return response()->json($review);
     }
 
@@ -77,12 +73,14 @@ class ReviewController extends Controller
         return response()->json($review);
     }
 
-    public function deleteMyReview($reviewId)
+    public function deleteMyReview(Request $request, $businessId)
     {
         $user = Auth::user();
-        Review::where('id', $reviewId)
+        $business = Business::findOrFail($businessId);
+        Review::where('business_id', $business->id)
             ->where('user_id', $user->id)
             ->delete();
+        $business->recalculateBusinessStats();
         return response()->json(null, 204);
     }
 }

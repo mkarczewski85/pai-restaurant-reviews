@@ -35,5 +35,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::delete('/businesses/{business}', [BusinessController::class, 'delete']);
     Route::get('/businesses/{businessId}/reviews', [ReviewController::class, 'getBusinessReviews']);
     Route::get('/businesses/{businessId}/my-review', [ReviewController::class, 'getMyReview']);
-    Route::delete('/my/reviews/{reviewId}', [ReviewController::class, 'deleteMyReview']);
+    Route::post('/businesses/{businessId}/my-review', [ReviewController::class, 'storeMyReview']);
+    Route::delete('/businesses/{businessId}/my-review', [ReviewController::class, 'deleteMyReview']);
+//    Route::delete('/my/reviews/{reviewId}', [ReviewController::class, 'deleteMyReview']);
 });

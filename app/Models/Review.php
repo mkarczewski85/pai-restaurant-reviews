@@ -10,7 +10,7 @@ class Review extends Model
 {
     protected $table = 'reviews';
 
-    protected $fillable = ['rating', 'review_text', 'useful_count', 'business_id', 'user_id'];
+    protected $fillable = ['rating', 'review_text', 'business_id', 'user_id', 'useful_count'];
 
     public function business(): BelongsTo
     {
