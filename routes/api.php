@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FavouriteController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,9 +34,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/businesses', [BusinessController::class, 'store']);
     Route::put('/businesses/{business}', [BusinessController::class, 'update']);
     Route::delete('/businesses/{business}', [BusinessController::class, 'delete']);
+
+    Route::post('/favorites/{businessId}', [FavouriteController::class, 'addToFavorites']);
+    Route::delete('/favorites/{businessId}', [FavouriteController::class, 'removeFromFavorites']);
+    Route::get('/favorites', [FavouriteController::class, 'getFavorites']);
+
     Route::get('/businesses/{businessId}/reviews', [ReviewController::class, 'getBusinessReviews']);
+
     Route::get('/businesses/{businessId}/my-review', [ReviewController::class, 'getMyReview']);
     Route::post('/businesses/{businessId}/my-review', [ReviewController::class, 'storeMyReview']);
     Route::delete('/businesses/{businessId}/my-review', [ReviewController::class, 'deleteMyReview']);
-//    Route::delete('/my/reviews/{reviewId}', [ReviewController::class, 'deleteMyReview']);
 });

@@ -14,15 +14,20 @@ class BusinessController extends Controller
     public function index()
     {
         $user = Auth::user();
-        return Business::join('business_categories', 'businesses.business_category_id', '=', 'business_categories.id')
+        $data = Business::join('business_categories', 'businesses.business_category_id', '=', 'business_categories.id')
             ->leftJoin('favourites', function($join) use ($user)
             {
                 $join->on('favourites.business_id', '=', 'businesses.id');
                 $join->on('favourites.user_id', '=', DB::raw($user->id));
             })
-            ->selectRaw('businesses.*, business_categories.name AS category_name, CASE WHEN favourites.business_id IS NOT NULL THEN "true" ELSE "false" END AS is_favourite')
+            ->selectRaw('businesses.*, business_categories.name AS category_name, CASE WHEN favourites.business_id IS NOT NULL THEN true ELSE false END AS is_favorite')
+            ->distinct()
             ->get();
-
+        foreach ($data as &$item)
+        {
+            $item['is_favorite'] = boolval($item['is_favorite']);
+        }
+        return json_encode($data);
     }
 
     public function show(Business $business)

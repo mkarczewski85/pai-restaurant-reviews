@@ -68,8 +68,8 @@
                 @click="review">
                 Oceń
             </v-btn>
-            <v-btn class="ml-auto">
-                <v-icon v-if="business.isFavorite">mdi-heart</v-icon>
+            <v-btn class="ml-auto" @click="handleFavorite(business)">
+                <v-icon v-if="business.is_favorite === true">mdi-heart</v-icon>
                 <v-icon v-else>mdi-heart-outline</v-icon>
             </v-btn>
         </v-card-actions>
@@ -81,7 +81,7 @@ import review from "@/components/Review.vue";
 
 export default {
 
-    props: ['business', 'showDetails']
+    props: ['business', 'showDetails', 'handleFavorite', 'handleReview']
 
 }
 </script>

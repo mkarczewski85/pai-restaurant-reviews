@@ -3,7 +3,9 @@
     <v-container style="overflow-y: hidden;" class="mt-10">
         <v-row align="center">
             <v-col v-for="business in businesses" :key="business.id" cols="4">
-                <BusinessCard :business="business" :showDetails="showDetails">
+                <BusinessCard :business="business"
+                              :showDetails="showDetails"
+                              :handleFavorite="handleFavorite">
 
                 </BusinessCard>
             </v-col>
@@ -78,12 +80,23 @@ export default {
             router.push({name: 'businessDetails', params: {id: business_id}})
         }
 
+        const handleFavorite = async (business) => {
+            let op = business.is_favorite ? 'delete' : 'post'
+            try {
+                const res = await request(op, '/api/favorites/' + business.id)
+                business.is_favorite = !business.is_favorite
+            } catch (e) {
+                await router.push('/')
+            }
+        }
+
         return {
             user,
             businesses,
             isLoading,
             handleLogout,
-            showDetails
+            showDetails,
+            handleFavorite
         }
     },
 }
