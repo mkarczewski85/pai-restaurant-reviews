@@ -16,13 +16,18 @@ class ReviewController extends Controller
         return Review::all();
     }
 
-    public function getBusinessReviews($businessId)
+    public function getBusinessReviews(Request $request, $businessId)
     {
         $user = Auth::user();
+        $limit = $request->limit;
+        $offset = $request->offset;
+
         return Review::join('users', 'reviews.user_id', '=', 'users.id')
             ->select('reviews.*', 'users.name AS author')
             ->where('business_id', $businessId)
             ->where('user_id', '!=', $user->id)
+            ->skip($offset)
+            ->take($limit)
             ->get();
     }
 

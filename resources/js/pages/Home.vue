@@ -1,12 +1,9 @@
 <template>
-
     <v-container style="overflow-y: hidden;" class="mt-10">
         <v-row align="center">
             <v-col v-for="business in businesses" :key="business.id" cols="4">
                 <BusinessCard :business="business"
-                              :showDetails="showDetails"
                               :handleFavorite="handleFavorite">
-
                 </BusinessCard>
             </v-col>
         </v-row>
@@ -32,13 +29,6 @@ export default {
         loading: false,
         selection: 1,
     }),
-
-    methods: {
-        reserve() {
-            this.loading = true
-            setTimeout(() => (this.loading = false), 2000)
-        },
-    },
 
     setup() {
         const user = ref()
@@ -76,10 +66,6 @@ export default {
             router.push('/')
         }
 
-        const showDetails = (business_id) => {
-            router.push({name: 'businessDetails', params: {id: business_id}})
-        }
-
         const handleFavorite = async (business) => {
             let op = business.is_favorite ? 'delete' : 'post'
             try {
@@ -95,7 +81,6 @@ export default {
             businesses,
             isLoading,
             handleLogout,
-            showDetails,
             handleFavorite
         }
     },

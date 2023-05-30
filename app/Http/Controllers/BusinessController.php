@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Business;
 use App\Models\BusinessCategory;
+use App\Models\Favourite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -37,10 +38,15 @@ class BusinessController extends Controller
 
     public function getBusinessDetails($id)
     {
-        return Business::join('business_categories', 'businesses.business_category_id', '=', 'business_categories.id')
+        $user = Auth::user();
+        $businessDetails = Business::join('business_categories', 'businesses.business_category_id', '=', 'business_categories.id')
             ->select('businesses.*', 'business_categories.name AS category_name')
             ->where('businesses.id', $id)
             ->first();
+        $isFavorite = Favourite::where('business_id', $businessDetails->id)
+            ->where('user_id', $user->id)->count() >= 1;
+        $businessDetails->is_favorite = $isFavorite;
+        return json_encode($businessDetails);
     }
 
     public function store(Request $request)

@@ -12,8 +12,7 @@
             height="250"
             rounded
             max-width="800"
-            width="100%"
-        >
+            width="100%">
             <div>
                 <div class="text-h5 font-weight-medium mb-2">
                     Nie wystawiłeś jeszcze swojej opinii!
@@ -21,18 +20,26 @@
                 <v-dialog
                     v-model="dialog"
                     persistent
-                    width="1024"
-                >
+                    width="1024">
                     <template v-slot:activator="{ props }">
-                        <v-btn v-bind="props" prepend-icon="mdi-typewriter" color="primary" class="mt-4">Recenzuj</v-btn>
+                        <v-btn v-bind="props" prepend-icon="mdi-typewriter" color="primary" class="mt-4">Recenzuj
+                        </v-btn>
                     </template>
                     <ReviewForm :closeDialog="closeDialog" :handleReviewSubmit="storeMyReview"></ReviewForm>
                 </v-dialog>
             </div>
         </v-sheet>
-        <Review v-for="review in reviews" :review="review">
 
-        </Review>
+        <v-infinite-scroll @load="load">
+            <template v-for="(review, index) in reviews" :key="review">
+                <Review :review="review"></Review>
+            </template>
+            <template v-slot:empty>
+                <v-alert variant="outlined" density="compact" max-width="400">
+                    <div style="display: flex; justify-content: center; align-items: center; height: 100%;">Brak więcej wyników</div>
+                </v-alert>
+            </template>
+        </v-infinite-scroll>
     </v-container>
     <AppBar></AppBar>
 </template>
@@ -42,7 +49,6 @@ import {ref, onMounted} from 'vue'
 import {createRouter as router, useRouter} from "vue-router";
 import {request} from '../helper'
 import Loader from '../components/Loader.vue';
-import route from "@/route";
 import BusinessCard from "@/components/BusinessCard.vue";
 import AppBar from "@/components/AppBar.vue";
 import BusinessDetailsCard from "@/components/BusinessDetailsCard.vue";
@@ -66,40 +72,44 @@ export default {
         selection: 1,
     }),
 
-    methods: {
-        reserve() {
-            this.loading = true
-            setTimeout(() => (this.loading = false), 2000)
-        },
-    },
-
     setup() {
         const dialog = ref(false)
-        const reviews = ref()
+        const reviews = ref([])
         const myReview = ref()
         const businessDetails = ref()
         const isLoading = ref()
+        const limit = ref(10)
+        const offset = ref(0)
+        const scrollStatus = ref('ok')
 
         let router = useRouter();
+        let id = router.currentRoute.value.params.id;
+
+
         onMounted(() => {
             retrieveBusinessDetails()
             retrieveMyReview()
             retrieveReviews()
         });
 
-        let id = router.currentRoute.value.params.id;
-
-        const retrieveBusinessDetails = async () => {
+        const retrieveReviews = async () => {
             isLoading.value = true
             try {
-                const res = await request('get', '/api/businesses/' + id + '/reviews')
-                reviews.value = res.data
+                const res = await request('get', '/api/businesses/' + id + '/reviews' + '?limit=' + limit.value + '&offset=' + offset.value)
+                // reviews.value == null ? reviews.value = res.data : reviews.value.push(...res.data)
+                reviews.value.push(...res.data)
+                if (res.data.length < limit.value) {
+                    scrollStatus.value = 'empty'
+                }
+                offset.value += limit.value
+
             } catch (e) {
+                scrollStatus.value = 'error'
                 await router.push('/')
             }
         }
 
-        const retrieveReviews = async () => {
+        const retrieveBusinessDetails = async () => {
             isLoading.value = true
             try {
                 const res = await request('get', '/api/businesses/' + id)
@@ -128,6 +138,7 @@ export default {
                     myReview.value = null;
                 }
             } catch (e) {
+                console.log(e)
                 await router.push('/')
             }
         }
@@ -144,6 +155,13 @@ export default {
             dialog.value = false;
         }
 
+        const load = ({done}) => {
+            setTimeout(() => {
+                retrieveReviews()
+                done(scrollStatus.value)
+            }, 1000)
+        }
+
         return {
             dialog,
             reviews,
@@ -153,6 +171,8 @@ export default {
             deleteMyReview,
             storeMyReview,
             closeDialog,
+            retrieveReviews,
+            load
         }
     },
 }

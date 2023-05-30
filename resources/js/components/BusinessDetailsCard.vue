@@ -35,6 +35,7 @@
             <v-card-subtitle>
                 <span class="me-1">{{ businessDetails.address }}, {{ businessDetails.city }}</span>
             </v-card-subtitle>
+
         </v-card-item>
 
         <v-card-text>
@@ -72,10 +73,9 @@
         </v-card-text>
 
         <v-card-actions>
-            <v-btn
-                icon
-                @click="favorite" class="ml-auto">
-                <v-icon> mdi-heart</v-icon>
+            <v-btn class="ml-auto" @click="handleFavorite(businessDetails)">
+                <v-icon v-if="businessDetails.is_favorite === true" color="red">mdi-heart</v-icon>
+                <v-icon v-else>mdi-heart-outline</v-icon>
             </v-btn>
         </v-card-actions>
 
@@ -83,10 +83,26 @@
 
 </template>
 <script>
+import {request} from '../helper'
+import {createRouter as router, useRouter} from "vue-router";
 
 export default {
 
-    props: ['businessDetails', 'loading']
+    props: ['businessDetails', 'loading'],
 
+    setup() {
+        const handleFavorite = async (businessDetails) => {
+            let op = businessDetails.is_favorite ? 'delete' : 'post'
+            try {
+                const res = await request(op, '/api/favorites/' + businessDetails.id)
+                businessDetails.is_favorite = !businessDetails.is_favorite
+            } catch (e) {
+                await router.push('/')
+            }
+        }
+        return {
+            handleFavorite
+        }
+    }
 }
 </script>

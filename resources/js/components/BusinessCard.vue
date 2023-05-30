@@ -2,7 +2,7 @@
     <v-card
         :loading="loading"
         class="mx-auto my-12"
-        height="450"
+        height="460"
         width="374">
         <template v-slot:loader="{ isActive }">
             <v-progress-linear
@@ -18,15 +18,15 @@
             height="250"
             src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
         ></v-img>
+        <router-link :to="{name: 'businessDetails', params: {id: business.id}}">
+            <v-card-item>
+                <v-card-title>{{ business.name }}</v-card-title>
 
-        <v-card-item>
-            <v-card-title>{{ business.name }}</v-card-title>
-
-            <v-card-subtitle>
-                <span class="me-1">{{ business.address }}, {{ business.city }}</span>
-            </v-card-subtitle>
-        </v-card-item>
-
+                <v-card-subtitle>
+                    <span class="me-1">{{ business.address }}, {{ business.city }}</span>
+                </v-card-subtitle>
+            </v-card-item>
+        </router-link>
         <v-card-text>
             <v-row
                 align="center"
@@ -56,20 +56,8 @@
         </v-card-text>
 
         <v-card-actions>
-            <v-btn
-                color="deep-purple-lighten-2"
-                variant="text"
-                @click="showDetails(business.id)">
-                Szczegóły
-            </v-btn>
-            <v-btn
-                color="deep-purple-lighten-2"
-                variant="text"
-                @click="review">
-                Oceń
-            </v-btn>
             <v-btn class="ml-auto" @click="handleFavorite(business)">
-                <v-icon v-if="business.is_favorite === true">mdi-heart</v-icon>
+                <v-icon v-if="business.is_favorite === true" color="red">mdi-heart</v-icon>
                 <v-icon v-else>mdi-heart-outline</v-icon>
             </v-btn>
         </v-card-actions>
@@ -81,7 +69,7 @@ import review from "@/components/Review.vue";
 
 export default {
 
-    props: ['business', 'showDetails', 'handleFavorite', 'handleReview']
+    props: ['business', 'handleFavorite']
 
 }
 </script>
