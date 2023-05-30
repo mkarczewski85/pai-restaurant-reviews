@@ -33,7 +33,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 // });
 
 import 'vuetify/styles'
-import * as labsComponents from 'vuetify/labs/components'
+import { VInfiniteScroll } from 'vuetify/labs/VInfiniteScroll'
 import {createApp} from 'vue'
 import {createVuetify} from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
@@ -58,7 +58,7 @@ const vuetify = createVuetify(
             },
         },
         components: {
-            ...labsComponents,
+            VInfiniteScroll,
         },
     }
 )
