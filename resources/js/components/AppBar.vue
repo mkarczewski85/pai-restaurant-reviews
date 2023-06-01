@@ -11,7 +11,7 @@
                     </v-icon>
                 </v-btn>
             </router-link>
-            <v-toolbar-title>DishDash - oceń restauracje</v-toolbar-title>
+            <v-toolbar-title>FoodCritique - oceń restauracje</v-toolbar-title>
             <v-spacer></v-spacer>
 
             <v-btn icon>

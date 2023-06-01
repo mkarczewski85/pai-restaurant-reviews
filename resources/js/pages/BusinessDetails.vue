@@ -32,7 +32,7 @@
 
         <v-infinite-scroll @load="load">
             <template v-for="(review, index) in reviews" :key="review">
-                <Review :review="review"></Review>
+                <Review :review="review" :handleLike="handleLike"></Review>
             </template>
             <template v-slot:empty>
                 <v-alert variant="outlined" density="compact" max-width="400">
@@ -89,19 +89,19 @@ export default {
         onMounted(() => {
             retrieveBusinessDetails()
             retrieveMyReview()
-            retrieveReviews()
+            // retrieveReviews()
         });
 
         const retrieveReviews = async () => {
             isLoading.value = true
             try {
                 const res = await request('get', '/api/businesses/' + id + '/reviews' + '?limit=' + limit.value + '&offset=' + offset.value)
-                // reviews.value == null ? reviews.value = res.data : reviews.value.push(...res.data)
                 reviews.value.push(...res.data)
                 if (res.data.length < limit.value) {
                     scrollStatus.value = 'empty'
+                } else {
+                    offset.value += limit.value
                 }
-                offset.value += limit.value
 
             } catch (e) {
                 scrollStatus.value = 'error'
@@ -151,6 +151,16 @@ export default {
             dialog.value = false;
         }
 
+        const handleLike = async (review) => {
+            let op = review.is_liked ? 'delete' : 'post'
+            try {
+                const res = await request(op, '/api/review/' + review.id + '/like')
+                review.is_liked = !review.is_liked
+            } catch (e) {
+                await router.push('/')
+            }
+        }
+
         const closeDialog = () => {
             dialog.value = false;
         }
@@ -172,6 +182,7 @@ export default {
             storeMyReview,
             closeDialog,
             retrieveReviews,
+            handleLike,
             load
         }
     },

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FavouriteController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ReviewLikesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BusinessController;
@@ -17,10 +18,6 @@ use App\Http\Controllers\auth\AuthController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::post('/auth/register', [AuthController::class, 'createUser']);
 Route::post('/auth/login', [AuthController::class, 'loginUser']);
@@ -40,6 +37,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/favorites', [FavouriteController::class, 'getFavorites']);
 
     Route::get('/businesses/{businessId}/reviews', [ReviewController::class, 'getBusinessReviews']);
+
+    Route::post('/review/{reviewId}/like', [ReviewLikesController::class, 'likeReview']);
+    Route::delete('/review/{reviewId}/like', [ReviewLikesController::class, 'unlikeReview']);
 
     Route::get('/businesses/{businessId}/my-review', [ReviewController::class, 'getMyReview']);
     Route::post('/businesses/{businessId}/my-review', [ReviewController::class, 'storeMyReview']);

@@ -13,6 +13,10 @@ class Business extends Model
 
     protected $fillable = ['name', 'description', 'address', 'city', 'state', 'zip_code', 'price_level', 'avg_rating', 'business_category_id'];
 
+    protected $casts = [
+        'photos' => 'array'
+    ];
+
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);

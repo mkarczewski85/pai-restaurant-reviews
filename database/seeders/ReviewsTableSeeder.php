@@ -18,9 +18,9 @@ class ReviewsTableSeeder extends Seeder
         for ($i = 1; $i <= 10; $i++) {
             for ($j = 0; $j < 20; $j++) {
                 Review::create([
-                    'review_text' => $faker->paragraph(5),
+                    'review_text' => $faker->paragraph(10),
                     'rating' => rand(1, 5),
-                    'useful_count' => rand(1, 100),
+                    'likes_count' => rand(1, 100),
                     'business_id' => $i,
                     'user_id' => 1,
                 ]);

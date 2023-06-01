@@ -22,13 +22,26 @@ class ReviewController extends Controller
         $limit = $request->limit;
         $offset = $request->offset;
 
-        return Review::join('users', 'reviews.user_id', '=', 'users.id')
-            ->select('reviews.*', 'users.name AS author')
-            ->where('business_id', $businessId)
-            ->where('user_id', '!=', $user->id)
+        $data = Review::join('users', 'reviews.user_id', '=', 'users.id')
+            ->leftJoin('review_likes', function($join) use ($user)
+            {
+                $join->on('review_likes.review_id', '=', 'reviews.id');
+                $join->on('review_likes.user_id', '=', DB::raw($user->id));
+            })
+//            ->select('reviews.*', 'users.name AS author')
+            ->selectRaw('reviews.*, users.name AS author, CASE WHEN review_likes.review_id IS NOT NULL THEN true ELSE false END AS is_liked')
+            ->where('reviews.business_id', $businessId)
+            ->where('reviews.user_id', '!=', $user->id)
+            ->distinct()
             ->skip($offset)
             ->take($limit)
             ->get();
+
+        foreach ($data as &$item)
+        {
+            $item['is_liked'] = boolval($item['is_liked']);
+        }
+        return json_encode($data);
     }
 
     public function getMyReview($businessId)

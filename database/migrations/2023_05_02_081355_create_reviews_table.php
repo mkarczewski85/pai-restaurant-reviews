@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('rating');
             $table->text('review_text');
-            $table->integer('useful_count');
+            $table->integer('likes_count');
             $table->unsignedBigInteger('business_id');
             $table->unsignedBigInteger('user_id');
             $table->foreign('business_id')->references('id')->on('businesses')->onDelete('cascade');

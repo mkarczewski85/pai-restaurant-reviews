@@ -12,21 +12,8 @@
             ></v-progress-linear>
         </template>
 
-        <v-carousel show-arrows="hover">
-            <v-carousel-item
-                src="https://images.pexels.com/photos/67468/pexels-photo-67468.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                cover
-            ></v-carousel-item>
-
-            <v-carousel-item
-                src="https://images.pexels.com/photos/2074130/pexels-photo-2074130.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                cover
-            ></v-carousel-item>
-
-            <v-carousel-item
-                src="https://images.pexels.com/photos/1484516/pexels-photo-1484516.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                cover
-            ></v-carousel-item>
+        <v-carousel show-arrows="hover" v-if="businessDetails != null">
+            <v-carousel-item v-for="(photo, index) in businessDetails.photos" :key="photo" :src="photo" cover></v-carousel-item>
         </v-carousel>
 
         <v-card-item>

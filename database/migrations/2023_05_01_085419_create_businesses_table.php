@@ -22,6 +22,7 @@ return new class extends Migration
             $table->float('avg_rating');
             $table->integer('total_reviews');
             $table->integer('price_level');
+            $table->json('photos');
             $table->unsignedBigInteger('business_category_id');
             $table->foreign('business_category_id')->references('id')->on('business_categories');
             $table->timestamps();
