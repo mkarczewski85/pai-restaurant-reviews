@@ -13,9 +13,12 @@ use function MongoDB\BSON\toJSON;
 
 class BusinessController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
+        $limit = $request->limit;
+        $offset = $request->offset;
+
         $data = Business::join('business_categories', 'businesses.business_category_id', '=', 'business_categories.id')
             ->leftJoin('favourites', function($join) use ($user)
             {
@@ -24,7 +27,10 @@ class BusinessController extends Controller
             })
             ->selectRaw('businesses.*, business_categories.name AS category_name, CASE WHEN favourites.business_id IS NOT NULL THEN true ELSE false END AS is_favorite')
             ->distinct()
+            ->skip($offset)
+            ->take($limit)
             ->get();
+
         foreach ($data as &$item)
         {
             $item['is_favorite'] = boolval($item['is_favorite']);

@@ -89,7 +89,6 @@ export default {
         onMounted(() => {
             retrieveBusinessDetails()
             retrieveMyReview()
-            // retrieveReviews()
         });
 
         const retrieveReviews = async () => {
@@ -102,8 +101,8 @@ export default {
                 } else {
                     offset.value += limit.value
                 }
-
             } catch (e) {
+                console.log(e)
                 scrollStatus.value = 'error'
                 await router.push('/')
             }

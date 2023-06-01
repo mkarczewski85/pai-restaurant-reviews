@@ -1,12 +1,27 @@
 <template>
     <v-container style="overflow-y: hidden;" class="mt-10">
-        <v-row align="center">
-            <v-col v-for="business in businesses" :key="business.id" cols="4">
-                <BusinessCard :business="business"
-                              :handleFavorite="handleFavorite">
-                </BusinessCard>
-            </v-col>
-        </v-row>
+        <v-infinite-scroll @load="load">
+            <v-row align="center">
+                <v-col v-for="business in businesses" :key="business.id" cols="4">
+                    <BusinessCard :business="business"
+                                  :handleFavorite="handleFavorite">
+                    </BusinessCard>
+                </v-col>
+            </v-row>
+<!--            <template v-slot:load-more="{ props }">-->
+<!--                <v-btn-->
+<!--                    text="Więcej..."-->
+<!--                    variant="outlined"-->
+<!--                    color="primary"-->
+<!--                    v-bind="props"-->
+<!--                ></v-btn>-->
+<!--            </template>-->
+            <template v-slot:empty>
+                <v-alert variant="outlined" density="compact" max-width="400">
+                    <div style="display: flex; justify-content: center; align-items: center; height: 100%;">Brak więcej wyników</div>
+                </v-alert>
+            </template>
+        </v-infinite-scroll>
     </v-container>
     <AppBar></AppBar>
 </template>
@@ -32,8 +47,11 @@ export default {
 
     setup() {
         const user = ref()
-        const businesses = ref()
+        const businesses = ref([])
         const isLoading = ref()
+        const limit = ref(10)
+        const offset = ref(0)
+        const scrollStatus = ref('ok')
 
         let router = useRouter();
         onMounted(() => {
@@ -54,9 +72,16 @@ export default {
         const retrieveBusinesses = async () => {
             isLoading.value = true
             try {
-                const res = await request('get', '/api/businesses')
-                businesses.value = res.data
+                const res = await request('get', '/api/businesses' + '?limit=' + limit.value + '&offset=' + offset.value)
+                businesses.value.push(...res.data)
+                if (res.data.length < limit.value) {
+                    scrollStatus.value = 'empty'
+                } else {
+                    offset.value += limit.value
+                }
             } catch (e) {
+                console.log(e)
+                scrollStatus.value = 'error'
                 await router.push('/')
             }
         }
@@ -76,12 +101,20 @@ export default {
             }
         }
 
+        const load = ({done}) => {
+            setTimeout(() => {
+                retrieveBusinesses()
+                done(scrollStatus.value)
+            }, 1000)
+        }
+
         return {
             user,
             businesses,
             isLoading,
             handleLogout,
-            handleFavorite
+            handleFavorite,
+            load
         }
     },
 }
