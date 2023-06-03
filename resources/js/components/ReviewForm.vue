@@ -15,6 +15,7 @@
                 </div>
                 <v-rating
                     v-model="form.rating"
+
                     hover
                 ></v-rating>
             </v-container>
@@ -42,6 +43,7 @@
 
 <script>
 import {reactive} from 'vue';
+import {value} from "lodash/seq";
 
 export default {
     props: ['handleReviewSubmit', 'closeDialog'],
@@ -49,7 +51,7 @@ export default {
     setup() {
         const form = reactive({
             review_text: '',
-            rating: 0,
+            rating: 1,
         })
 
         const reviewRules = [
@@ -67,6 +69,10 @@ export default {
             value => {
                 if (value) return true
                 return 'Pole wymagane.'
+            },
+            value => {
+                if (value >= 1) return true
+                return 'Możesz dać minimum jedną gwiazdkę'
             },
         ];
 

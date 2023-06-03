@@ -28,11 +28,11 @@ class ReviewController extends Controller
                 $join->on('review_likes.review_id', '=', 'reviews.id');
                 $join->on('review_likes.user_id', '=', DB::raw($user->id));
             })
-//            ->select('reviews.*', 'users.name AS author')
             ->selectRaw('reviews.*, users.name AS author, CASE WHEN review_likes.review_id IS NOT NULL THEN true ELSE false END AS is_liked')
             ->where('reviews.business_id', $businessId)
             ->where('reviews.user_id', '!=', $user->id)
             ->distinct()
+            ->orderBy('likes_count', 'desc')
             ->skip($offset)
             ->take($limit)
             ->get();
@@ -77,7 +77,7 @@ class ReviewController extends Controller
             'business_id' => $business->id,
             'rating' => $input['rating'],
             'review_text' => $input['review_text'],
-            'useful_count' => 0,
+            'likes_count' => 0,
         ]);
 
         $business->recalculateBusinessStats();
@@ -91,7 +91,7 @@ class ReviewController extends Controller
         return response()->json($review);
     }
 
-    public function deleteMyReview(Request $request, $businessId)
+    public function deleteMyReview($businessId)
     {
         $user = Auth::user();
         $business = Business::findOrFail($businessId);

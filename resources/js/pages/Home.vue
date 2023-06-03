@@ -1,6 +1,6 @@
 <template>
-    <v-container style="overflow-y: hidden;" class="mt-10">
-        <v-infinite-scroll @load="load">
+    <v-container style="overflow-y: hidden" class="mt-10">
+        <v-infinite-scroll mode="manual" @load="load" style="overflow-x: hidden;">
             <v-row align="center">
                 <v-col v-for="business in businesses" :key="business.id" cols="4">
                     <BusinessCard :business="business"
@@ -8,14 +8,14 @@
                     </BusinessCard>
                 </v-col>
             </v-row>
-<!--            <template v-slot:load-more="{ props }">-->
-<!--                <v-btn-->
-<!--                    text="Więcej..."-->
-<!--                    variant="outlined"-->
-<!--                    color="primary"-->
-<!--                    v-bind="props"-->
-<!--                ></v-btn>-->
-<!--            </template>-->
+            <template v-slot:load-more="{ props }">
+                <v-btn
+                    text="Więcej..."
+                    variant="outlined"
+                    color="primary"
+                    v-bind="props"
+                ></v-btn>
+            </template>
             <template v-slot:empty>
                 <v-alert variant="outlined" density="compact" max-width="400">
                     <div style="display: flex; justify-content: center; align-items: center; height: 100%;">Brak więcej wyników</div>
@@ -73,7 +73,7 @@ export default {
             isLoading.value = true
             try {
                 const res = await request('get', '/api/businesses' + '?limit=' + limit.value + '&offset=' + offset.value)
-                businesses.value.push(...res.data)
+                if (res.data.length > 0) businesses.value.push(...res.data)
                 if (res.data.length < limit.value) {
                     scrollStatus.value = 'empty'
                 } else {

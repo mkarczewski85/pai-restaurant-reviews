@@ -15,6 +15,15 @@
             <v-spacer></v-spacer>
 
             <v-btn icon>
+                <v-icon>mdi-heart</v-icon>
+            </v-btn>
+            <v-btn icon v-if="handleSearch">
+                <v-icon>mdi-magnify</v-icon>
+            </v-btn>
+            <v-btn icon v-if="handleFilter">
+                <v-icon>mdi-filter</v-icon>
+            </v-btn>
+            <v-btn icon>
                 <v-icon>mdi-account</v-icon>
             </v-btn>
             <v-btn icon @click="handleLogout">
@@ -27,6 +36,8 @@
 import {useRouter} from "vue-router";
 
 export default {
+
+    props: ['handleSearch', 'handleFilter'],
 
     setup() {
 

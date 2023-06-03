@@ -36,7 +36,7 @@
             </template>
             <template v-slot:empty>
                 <v-alert variant="outlined" density="compact" max-width="400">
-                    <div style="display: flex; justify-content: center; align-items: center; height: 100%;">Brak więcej wyników</div>
+                    <div style="display: flex; justify-content: center; align-items: center; height: 100%;">Brak wyników</div>
                 </v-alert>
             </template>
         </v-infinite-scroll>
@@ -155,6 +155,7 @@ export default {
             try {
                 const res = await request(op, '/api/review/' + review.id + '/like')
                 review.is_liked = !review.is_liked
+                review.is_liked ? review.likes_count++ : review.likes_count--
             } catch (e) {
                 await router.push('/')
             }

@@ -10,11 +10,10 @@
         ></v-rating>
         <v-banner :lines="lines" :text="review.review_text" :stacked="false">
             <template v-slot:actions>
-                <v-btn @click="handleLike(review)">
-                    <v-icon v-if="review.is_liked === true">mdi-thumb-up</v-icon>
-                    <v-icon v-else>mdi-thumb-up-outline</v-icon>
+                <v-btn variant="text" @click="handleLike(review)" :append-icon="review.is_liked === true ? 'mdi-thumb-up' : 'mdi-thumb-up-outline'">
+                    ({{  review.likes_count }})
                 </v-btn>
-                <v-btn @click="changeLines()" class="pt-2">{{ btnLabel }}</v-btn>
+                <v-btn @click="changeLines()">{{ btnLabel }}</v-btn>
             </template>
         </v-banner>
     </v-sheet>

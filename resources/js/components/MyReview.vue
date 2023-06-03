@@ -2,7 +2,7 @@
     <v-card>
         <v-card-item style="display: inline-block;">
             <v-card-title>Moja recenzja</v-card-title>
-            <v-card-subtitle>{{ myReview.created_at }}</v-card-subtitle>
+            <v-card-subtitle>{{ formatDate(myReview.created_at) }}</v-card-subtitle>
         </v-card-item>
         <v-card-text>
             {{ myReview.review_text }}
@@ -23,5 +23,13 @@
 
 export default {
     props: ['myReview', 'deleteFunction'],
+
+    methods: {
+        formatDate(date) {
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+            if (date == null) return new Date().toLocaleDateString('pl-PL', options);
+            return new Date(date).toLocaleDateString('pl-PL', options);
+        }
+    },
 }
 </script>

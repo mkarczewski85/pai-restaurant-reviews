@@ -23,7 +23,7 @@ class BusinessesTableSeeder extends Seeder
 
         $faker = \Faker\Factory::create();
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 15; $i++) {
             Business::create([
                 'name' => $faker->company,
                 'description' => $faker->paragraph(10),
@@ -34,7 +34,7 @@ class BusinessesTableSeeder extends Seeder
                 'avg_rating' => floatval(rand(100, 500)) / 100,
                 'total_reviews' => rand(1, 100),
                 'price_level' => rand(1, 4),
-                'photos' => json_encode(self::STOCK_PHOTOS_URLS),
+                'photos' => self::STOCK_PHOTOS_URLS,
                 'business_category_id' => rand(1, 2),
             ]);
         }
