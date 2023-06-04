@@ -76,6 +76,10 @@ export default {
                 return 'Hasło musi mieć min. 6 znaków.'
             },
             value => {
+                if (/^(?=.*[A-Z])(?=.*\d)(?=.{1,}[!@#$%&*()-=_+{};":|,.<>/?])\S{6,}$/.test(value)) return true;
+                return 'Nieprawidłowe hasło.'
+            },
+            value => {
                 if (value) return true
                 return 'Pole wymagane.'
             },
