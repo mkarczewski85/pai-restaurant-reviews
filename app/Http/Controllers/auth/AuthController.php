@@ -20,7 +20,10 @@ class AuthController extends Controller
                 [
                     'name' => 'required',
                     'email' => 'required|email|unique:users,email',
-                    'password' => 'required'
+                    'password' => array(
+                        'required',
+                        'regex:/^(?=.*[A-Z])(?=.*\d)(?=.{1,}[!@#$%&*()-=_+{};":|,.<>\/?])\S{6,}$/'
+                    )
                 ]);
 
             if ($validateUser->fails()) {
@@ -34,12 +37,13 @@ class AuthController extends Controller
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password)
+                'password' => Hash::make($request->password),
+                'role' => 'user'
             ]);
 
             return response()->json([
                 'status' => true,
-                'message' => 'User Created Successfully',
+                'message' => 'Sukces.',
                 'token' => $user->createToken("API TOKEN")->plainTextToken
             ], 200);
 
@@ -71,7 +75,7 @@ class AuthController extends Controller
             if (!Auth::attempt($request->only(['email', 'password']))) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Email & Password does not match with our record.',
+                    'message' => 'Wprowadzone hasło lub email są nieprawidłowe.',
                 ], 401);
             }
 
@@ -79,7 +83,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'User Logged In Successfully',
+                'message' => 'Sukces.',
                 'token' => $user->createToken("API TOKEN")->plainTextToken
             ], 200);
 

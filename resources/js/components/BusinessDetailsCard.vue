@@ -1,5 +1,4 @@
 <template>
-
     <v-card
         :loading="loading"
         class="mx-auto my-12 pt-4">
@@ -60,12 +59,20 @@
         </v-card-text>
 
         <v-card-actions>
-            <v-btn class="ml-auto" @click="handleFavorite(businessDetails)">
+            <v-btn @click="handleFavorite(businessDetails)">
                 <v-icon v-if="businessDetails.is_favorite === true" color="red">mdi-heart</v-icon>
                 <v-icon v-else>mdi-heart-outline</v-icon>
             </v-btn>
+            <v-btn :disabled="!businessDetails.homepage" :href="'//' + businessDetails.homepage" target="_blank">
+                <v-icon>mdi-web</v-icon>
+            </v-btn>
+            <v-btn :disabled="!businessDetails.facebook_profile" :href="'//' + businessDetails.facebook_profile" target="_blank">
+                <v-icon>mdi-facebook</v-icon>
+            </v-btn>
+            <v-btn :disabled="!businessDetails.instagram_profile" :href="'//' + businessDetails.instagram_profile" target="_blank">
+                <v-icon>mdi-instagram</v-icon>
+            </v-btn>
         </v-card-actions>
-
     </v-card>
 
 </template>

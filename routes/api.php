@@ -28,20 +28,23 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/businesses', [BusinessController::class, 'index']);
     Route::get('/businesses/{business}', [BusinessController::class, 'getBusinessDetails']);
-    Route::post('/businesses', [BusinessController::class, 'store']);
-    Route::put('/businesses/{business}', [BusinessController::class, 'update']);
-    Route::delete('/businesses/{business}', [BusinessController::class, 'delete']);
 
-    Route::post('/favorites/{businessId}', [FavouriteController::class, 'addToFavorites']);
-    Route::delete('/favorites/{businessId}', [FavouriteController::class, 'removeFromFavorites']);
-    Route::get('/favorites', [FavouriteController::class, 'getFavorites']);
+    // admin's endpoints
+    Route::post('/businesses', [BusinessController::class, 'store'])->middleware('restrictRole:admin');
+    Route::put('/businesses/{business}', [BusinessController::class, 'update'])->middleware('restrictRole:admin');
+    Route::delete('/businesses/{business}', [BusinessController::class, 'delete'])->middleware('restrictRole:admin');
 
-    Route::get('/businesses/{businessId}/reviews', [ReviewController::class, 'getBusinessReviews']);
+    // user's endpoints
+    Route::post('/favorites/{businessId}', [FavouriteController::class, 'addToFavorites'])->middleware('restrictRole:user');
+    Route::delete('/favorites/{businessId}', [FavouriteController::class, 'removeFromFavorites'])->middleware('restrictRole:user');
+    Route::get('/favorites', [FavouriteController::class, 'getFavorites'])->middleware('restrictRole:user');
 
-    Route::post('/review/{reviewId}/like', [ReviewLikesController::class, 'likeReview']);
-    Route::delete('/review/{reviewId}/like', [ReviewLikesController::class, 'unlikeReview']);
+    Route::get('/businesses/{businessId}/reviews', [ReviewController::class, 'getBusinessReviews'])->middleware('restrictRole:user');
 
-    Route::get('/businesses/{businessId}/my-review', [ReviewController::class, 'getMyReview']);
-    Route::post('/businesses/{businessId}/my-review', [ReviewController::class, 'storeMyReview']);
-    Route::delete('/businesses/{businessId}/my-review', [ReviewController::class, 'deleteMyReview']);
+    Route::post('/review/{reviewId}/like', [ReviewLikesController::class, 'likeReview'])->middleware('restrictRole:user');
+    Route::delete('/review/{reviewId}/like', [ReviewLikesController::class, 'unlikeReview'])->middleware('restrictRole:user');
+
+    Route::get('/businesses/{businessId}/my-review', [ReviewController::class, 'getMyReview'])->middleware('restrictRole:user');
+    Route::post('/businesses/{businessId}/my-review', [ReviewController::class, 'storeMyReview'])->middleware('restrictRole:user');
+    Route::delete('/businesses/{businessId}/my-review', [ReviewController::class, 'deleteMyReview'])->middleware('restrictRole:user');
 });

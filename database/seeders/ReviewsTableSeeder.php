@@ -15,8 +15,8 @@ class ReviewsTableSeeder extends Seeder
     {
         $faker = \Faker\Factory::create();
 
-        for ($i = 1; $i <= 10; $i++) {
-            for ($j = 0; $j < 20; $j++) {
+        for ($i = 1; $i <= 15; $i++) {
+            for ($j = 0; $j < 23; $j++) {
                 Review::create([
                     'review_text' => $faker->paragraph(10),
                     'rating' => rand(1, 5),

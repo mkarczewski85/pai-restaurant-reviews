@@ -11,7 +11,22 @@ class Business extends Model
 {
     protected $table = 'businesses';
 
-    protected $fillable = ['name', 'description', 'address', 'city', 'state', 'zip_code', 'price_level', 'avg_rating', 'business_category_id'];
+    protected $fillable = [
+        'name',
+        'description',
+        'address',
+        'city',
+        'state',
+        'zip_code',
+        'price_level',
+        'avg_rating',
+        'business_category_id',
+        'homepage',
+        'photos',
+        'main_photo',
+        'facebook_profile',
+        'instagram_profile',
+    ];
 
     protected $casts = [
         'photos' => 'array'

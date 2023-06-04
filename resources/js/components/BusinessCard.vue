@@ -16,7 +16,7 @@
         <v-img
             cover
             height="250"
-            src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+            :src="business.main_photo"
         ></v-img>
         <router-link :to="{name: 'businessDetails', params: {id: business.id}}">
             <v-card-item>

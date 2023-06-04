@@ -32,11 +32,11 @@ export default {
     },
 
     setup() {
-        const lines = ref('three')
+        const lines = ref('two')
         const btnLabel = ref("rozwiń")
 
         function changeLines() {
-            lines.value =  lines.value == 'default' ? 'three' : 'default'
+            lines.value =  lines.value == 'default' ? 'two' : 'default'
             btnLabel.value = lines.value == 'default' ? "zwiń" : 'rozwiń'
         }
 
