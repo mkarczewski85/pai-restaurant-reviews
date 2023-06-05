@@ -1,7 +1,5 @@
 <template>
-
     <v-container style="overflow-y: auto;">
-
         <BusinessDetailsCard :businessDetails="businessDetails" :loading="loading"></BusinessDetailsCard>
 
         <MyReview :myReview="myReview" :deleteFunction="deleteMyReview" v-if="myReview"></MyReview>
@@ -80,7 +78,6 @@ export default {
         const isLoading = ref()
         const limit = ref(10)
         const offset = ref(0)
-        const scrollStatus = ref('ok')
 
         let router = useRouter();
         let id = router.currentRoute.value.params.id;
@@ -91,19 +88,22 @@ export default {
             retrieveMyReview()
         });
 
-        const retrieveReviews = async () => {
+        const retrieveReviews = async (done) => {
             isLoading.value = true
             try {
                 const res = await request('get', '/api/businesses/' + id + '/reviews' + '?limit=' + limit.value + '&offset=' + offset.value)
-                reviews.value.push(...res.data)
-                if (res.data.length < limit.value) {
-                    scrollStatus.value = 'empty'
-                } else {
+
+                if (res.data.length) {
+                    reviews.value.push(...res.data)
+                    done('ok')
                     offset.value += limit.value
+                } else {
+                    done('empty')
                 }
+
             } catch (e) {
                 console.log(e)
-                scrollStatus.value = 'error'
+                done('error')
                 await router.push('/')
             }
         }
@@ -167,8 +167,7 @@ export default {
 
         const load = ({done}) => {
             setTimeout(() => {
-                retrieveReviews()
-                done(scrollStatus.value)
+                retrieveReviews(done)
             }, 1000)
         }
 

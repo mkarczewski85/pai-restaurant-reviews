@@ -20,8 +20,7 @@ class BusinessController extends Controller
         $offset = $request->offset;
 
         $data = Business::join('business_categories', 'businesses.business_category_id', '=', 'business_categories.id')
-            ->leftJoin('favourites', function($join) use ($user)
-            {
+            ->leftJoin('favourites', function ($join) use ($user) {
                 $join->on('favourites.business_id', '=', 'businesses.id');
                 $join->on('favourites.user_id', '=', DB::raw($user->id));
             })
@@ -31,8 +30,7 @@ class BusinessController extends Controller
             ->take($limit)
             ->get();
 
-        foreach ($data as &$item)
-        {
+        foreach ($data as &$item) {
             $item['is_favorite'] = boolval($item['is_favorite']);
         }
         return json_encode($data);
@@ -51,7 +49,7 @@ class BusinessController extends Controller
             ->where('businesses.id', $id)
             ->first();
         $isFavorite = Favourite::where('business_id', $businessDetails->id)
-            ->where('user_id', $user->id)->count() >= 1;
+                ->where('user_id', $user->id)->count() >= 1;
         $businessDetails->is_favorite = $isFavorite;
         return json_encode($businessDetails);
     }
