@@ -51,7 +51,6 @@ export default {
         const isLoading = ref()
         const limit = ref(10)
         const offset = ref(0)
-        const scrollStatus = ref('ok')
 
         let router = useRouter();
         onMounted(() => {
@@ -69,19 +68,23 @@ export default {
             }
         }
 
-        const retrieveBusinesses = async () => {
+        const retrieveBusinesses = async (done) => {
             isLoading.value = true
+            let init = businesses.value.length === 0
             try {
                 const res = await request('get', '/api/businesses' + '?limit=' + limit.value + '&offset=' + offset.value)
-                if (res.data.length > 0) businesses.value.push(...res.data)
-                if (res.data.length < limit.value) {
-                    scrollStatus.value = 'empty'
-                } else {
+                if (res.data.length) {
+                    businesses.value.push(...res.data)
                     offset.value += limit.value
+                    if (init) return
+                    done('ok')
+                } else {
+                    done('empty')
                 }
+
             } catch (e) {
                 console.log(e)
-                scrollStatus.value = 'error'
+                done('error')
                 await router.push('/')
             }
         }
@@ -103,8 +106,7 @@ export default {
 
         const load = ({done}) => {
             setTimeout(() => {
-                retrieveBusinesses()
-                done(scrollStatus.value)
+                retrieveBusinesses(done)
             }, 1000)
         }
 
