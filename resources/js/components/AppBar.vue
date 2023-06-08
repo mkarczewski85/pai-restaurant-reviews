@@ -13,10 +13,11 @@
             </router-link>
             <v-toolbar-title>FoodCritique - oceń restauracje</v-toolbar-title>
             <v-spacer></v-spacer>
-
-            <v-btn icon>
-                <v-icon>mdi-heart</v-icon>
-            </v-btn>
+            <router-link to="/favorites">
+                <v-btn icon>
+                    <v-icon>mdi-heart</v-icon>
+                </v-btn>
+            </router-link>
             <v-btn icon v-if="handleSearch">
                 <v-icon>mdi-magnify</v-icon>
             </v-btn>

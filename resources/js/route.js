@@ -20,6 +20,10 @@ const router = createRouter({
             component: () => import('./pages/Account.vue')
         },
         {
+            path: '/favorites',
+            component: () => import('./pages/Favorites.vue')
+        },
+        {
             path: '/business/:id',
             name: 'businessDetails',
             component: () => import('./pages/BusinessDetails.vue'),

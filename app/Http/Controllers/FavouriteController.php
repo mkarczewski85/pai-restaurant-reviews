@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Business;
 use App\Models\Favourite;
 use App\Models\Review;
 use Illuminate\Http\Request;
@@ -32,10 +33,22 @@ class FavouriteController extends Controller
         return response()->json(null, 204);
     }
 
-    public function getFavorites()
+    public function getFavorites(Request $request)
     {
         $user = Auth::user();
-        return Favourite::where('user_id', $user->id)
+        $limit = $request->limit;
+        $offset = $request->offset;
+        $data = Business::join('favourites', 'businesses.id', '=', 'favourites.business_id')
+            ->where('user_id', $user->id)
+            ->selectRaw('businesses.*, true as is_favorite')
+            ->distinct()
+            ->skip($offset)
+            ->take($limit)
             ->get();
+
+        foreach ($data as &$item) {
+            $item['is_favorite'] = boolval($item['is_favorite']);
+        }
+        return $data;
     }
 }

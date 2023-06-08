@@ -121,13 +121,3 @@ export default {
     },
 }
 </script>
-
-<style>
-.repeat {
-    display: flex;
-}
-
-.dollar {
-    margin-right: 2px;
-}
-</style>
