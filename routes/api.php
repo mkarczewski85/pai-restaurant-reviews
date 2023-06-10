@@ -35,8 +35,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::delete('/businesses/{business}', [BusinessController::class, 'delete'])->middleware('restrictRole:admin');
 
     // user's endpoints
-    Route::post('/favorites/{businessId}', [FavouriteController::class, 'addToFavorites'])->middleware('restrictRole:user');
     Route::get('/user-details', [AuthController::class, 'userDetails'])->middleware('restrictRole:user');
+    Route::put('/user-password', [AuthController::class, 'changePassword'])->middleware('restrictRole:user');
+
+    Route::post('/favorites/{businessId}', [FavouriteController::class, 'addToFavorites'])->middleware('restrictRole:user');
     Route::delete('/favorites/{businessId}', [FavouriteController::class, 'removeFromFavorites'])->middleware('restrictRole:user');
     Route::get('/favorites', [FavouriteController::class, 'getFavorites'])->middleware('restrictRole:user');
 

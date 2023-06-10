@@ -58,11 +58,44 @@ class AuthController extends Controller
         }
     }
 
-    public function updateuser(Request $request, User $user)
+    public function updateUserData(Request $request)
     {
-        $user->update($request->all());
 
-        return response()->json($user);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $validatePassword = Validator::make($request->all(),
+            [
+                'new_password' => array(
+                    'required',
+                    'regex:/^(?=.*[A-Z])(?=.*\d)(?=.{1,}[!@#$%&*()-=_+{};":|,.<>\/?])\S{6,}$/'
+                ),
+                'current_password' => array('required'),
+                'confirm_password' => array('required'),
+            ]);
+
+        if ($validatePassword->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'validation error',
+                'errors' => $validatePassword->errors()
+            ], 401);
+        }
+        $user = Auth::user();
+
+        if (!Hash::check($request->input('current_password'), $user->password)) {
+            return response()->json(['message' => 'Aktualne hasło jest niepoprawne.'], 400);
+        }
+
+        if ($request->input('new_password') !== $request->input('confirm_password')) {
+            return response()->json(['message' => 'Nowe hasło i potwierdzenie hasła nie są identyczne.'], 400);
+        }
+
+        $user->password = Hash::make($request->input('new_password'));
+        $user->save();
+
+        return response()->json(['message' => 'Hasło zostało zmienione.']);
     }
 
     public function loginUser(Request $request)
