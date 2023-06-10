@@ -16,59 +16,102 @@
                         </v-btn>
                     </template>
                     <v-form @submit.prevent="handlePasswordChange">
-                    <v-card>
-                        <v-card-title>
-                            <span class="text-h5">Zmiana hasła</span>
-                        </v-card-title>
-                        <v-card-text>
-                            <v-container>
-                                <v-row>
-                                    <v-col cols="12">
-                                        <v-text-field
-                                            label="Stare hasło"
-                                            type="password"
-                                            :rules="[v => v.length > 0 || 'Pole wymagane']"
-                                            v-model="passwordForm.current_password"
-                                            required
-                                        ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12">
-                                        <v-text-field
-                                            label="Nowe hasło"
-                                            :rules="newPasswordRules"
-                                            type="password"
-                                            v-model="passwordForm.new_password"
-                                            required
-                                        ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12">
-                                        <v-text-field
-                                            label="Potwierdź nowe hasło"
-                                            :rules="confirmPasswordRules"
-                                            type="password"
-                                            v-model="passwordForm.confirm_password"
-                                            required
-                                        ></v-text-field>
-                                    </v-col>
-                                </v-row>
-                            </v-container>
-                        </v-card-text>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="blue-darken-1" variant="text" @click="passwordDialog = false">
-                                Anuluj
-                            </v-btn>
-                            <v-btn color="blue-darken-1" variant="text" type="submit">
-                                Zmień
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
+                        <v-card>
+                            <v-card-title>
+                                <span class="text-h5">Zmiana hasła</span>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container>
+                                    <v-row>
+                                        <v-col cols="12">
+                                            <v-text-field
+                                                label="Stare hasło"
+                                                type="password"
+                                                :rules="[v => v.length > 0 || 'Pole wymagane']"
+                                                v-model="passwordForm.current_password"
+                                                required
+                                            ></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12">
+                                            <v-text-field
+                                                label="Nowe hasło"
+                                                :rules="newPasswordRules"
+                                                type="password"
+                                                v-model="passwordForm.new_password"
+                                                required
+                                            ></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12">
+                                            <v-text-field
+                                                label="Potwierdź nowe hasło"
+                                                :rules="confirmPasswordRules"
+                                                type="password"
+                                                v-model="passwordForm.confirm_password"
+                                                required
+                                            ></v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue-darken-1" variant="text" @click="passwordDialog = false">
+                                    Anuluj
+                                </v-btn>
+                                <v-btn color="blue-darken-1" variant="text" type="submit">
+                                    Zmień
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
                     </v-form>
                 </v-dialog>
 
-                <v-btn prepend-icon="mdi-pencil" variant="plain" class="ml-2">
-                    Aktualizuj dane
-                </v-btn>
+                <v-dialog v-model="dataDialog" persistent width="1024">
+                    <template v-slot:activator="{ props }">
+                        <v-btn v-bind="props" prepend-icon="mdi-pencil" variant="plain" class="ml-2">
+                            Aktualizuj dane
+                        </v-btn>
+                    </template>
+                    <v-form @submit.prevent="handleDataChange">
+                        <v-card>
+                            <v-card-title>
+                                <span class="text-h5">Aktualizacja danych</span>
+                            </v-card-title>
+                            <v-card-text>
+<!--                                <v-alert v-if="updateError" :text="updateErrors" type="error" variant="outlined"></v-alert>-->
+                                <v-container>
+                                    <v-row>
+                                        <v-col cols="12">
+                                            <v-text-field
+                                                label="Imię"
+                                                :rules="[v => v.length > 0 || 'Pole wymagane']"
+                                                v-model="dataForm.name"
+                                                required
+                                            ></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12">
+                                            <v-text-field
+                                                label="Email"
+                                                :rules="emailRules"
+                                                v-model="dataForm.email"
+                                                required
+                                            ></v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue-darken-1" variant="text" @click="dataDialog = false">
+                                    Anuluj
+                                </v-btn>
+                                <v-btn color="blue-darken-1" variant="text" type="submit">
+                                    Zapisz
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-form>
+                </v-dialog>
             </div>
 
             <v-divider class="border-opacity-75" color="info"></v-divider>
@@ -114,10 +157,15 @@ export default {
     setup() {
         const user = ref()
         const passwordDialog = ref(false);
+        const dataDialog = ref(false);
         const passwordForm = reactive({
             current_password: '',
             new_password: '',
             confirm_password: '',
+        });
+        const dataForm = reactive({
+            name: '',
+            email: '',
         });
 
         const newPasswordRules = [
@@ -142,6 +190,17 @@ export default {
             },
         ];
 
+        const emailRules = [
+            value => {
+                if (value) return true
+                return 'Pole wymagane.'
+            },
+            value => {
+                if (/.+@.+\..+/.test(value)) return true
+                return 'Nieprawidłowy adres email.'
+            },
+        ];
+
 
         onMounted(() => {
             userDetails()
@@ -151,6 +210,8 @@ export default {
             try {
                 const res = await request('get', '/api/user-details')
                 user.value = res.data
+                dataForm.name = user.value.name
+                dataForm.email = user.value.email
             } catch (e) {
                 await router.push('/')
             }
@@ -168,13 +229,31 @@ export default {
             passwordDialog.value = false;
         };
 
+        const handleDataChange = async (evt) => {
+            evt.preventDefault();
+            try {
+                const res = await request('put', '/api/user-data', dataForm)
+                user.value.name = res.data.name
+                user.value.email = res.data.email
+            } catch (e) {
+                if (e.response.data.errors) {
+                    console.log(e)
+                }
+            }
+            dataDialog.value = false;
+        };
+
         return {
             user,
             passwordForm,
             passwordDialog,
             newPasswordRules,
             confirmPasswordRules,
-            handlePasswordChange
+            dataForm,
+            dataDialog,
+            emailRules,
+            handlePasswordChange,
+            handleDataChange,
         }
     }
 }

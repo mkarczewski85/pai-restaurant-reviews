@@ -60,7 +60,30 @@ class AuthController extends Controller
 
     public function updateUserData(Request $request)
     {
+        $validateData = Validator::make($request->all(),
+            [
+                'name' => 'required',
+                'email' => 'required|email',
+            ]);
 
+        if ($validateData->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'validation error',
+                'errors' => $validateData->errors()
+            ], 401);
+        }
+        $user = Auth::user();
+
+        $emailTaken = User::where('email', $request->input('email'))->where('id', '!=', $user->id)->count() > 0;
+        if ($emailTaken) {
+            return response()->json(['message' => 'Podany adres email jest już używany'], 400);
+        }
+
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->save();
+        return $user;
     }
 
     public function changePassword(Request $request)
