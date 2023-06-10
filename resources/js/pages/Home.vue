@@ -7,15 +7,15 @@
             height="150px"
         >
 
-                <v-text-field
-                    hide-details
-                    prepend-icon="mdi-magnify"
-                    single-line
-                    clearable="true"
-                    onsubmit="searchFor"
-                    on-click:clear="resetResult"
-                    class="mt-5"
-                ></v-text-field>
+<!--                <v-text-field-->
+<!--                    hide-details-->
+<!--                    prepend-icon="mdi-magnify"-->
+<!--                    single-line-->
+<!--                    clearable="true"-->
+<!--                    onsubmit="searchFor"-->
+<!--                    on-click:clear="resetResult"-->
+<!--                    class="mt-5"-->
+<!--                ></v-text-field>-->
 
 
         </v-card>
