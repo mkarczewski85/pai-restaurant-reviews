@@ -20,6 +20,7 @@
                             <v-card-title>
                                 <span class="text-h5">Zmiana hasła</span>
                             </v-card-title>
+                            <v-alert v-if="passwordChangeError" :text="passwordChangeError.message" type="error" variant="outlined"></v-alert>
                             <v-card-text>
                                 <v-container>
                                     <v-row>
@@ -55,7 +56,7 @@
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn color="blue-darken-1" variant="text" @click="passwordDialog = false">
+                                <v-btn color="blue-darken-1" variant="text" @click="resetPasswordChangeForm">
                                     Anuluj
                                 </v-btn>
                                 <v-btn color="blue-darken-1" variant="text" type="submit">
@@ -78,7 +79,7 @@
                                 <span class="text-h5">Aktualizacja danych</span>
                             </v-card-title>
                             <v-card-text>
-<!--                                <v-alert v-if="updateError" :text="updateErrors" type="error" variant="outlined"></v-alert>-->
+                                <v-alert v-if="dataUpdateError" :text="dataUpdateError.message" type="error" variant="outlined"></v-alert>
                                 <v-container>
                                     <v-row>
                                         <v-col cols="12">
@@ -102,7 +103,7 @@
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn color="blue-darken-1" variant="text" @click="dataDialog = false">
+                                <v-btn color="blue-darken-1" variant="text" @click="resetDataUpdateForm">
                                     Anuluj
                                 </v-btn>
                                 <v-btn color="blue-darken-1" variant="text" type="submit">
@@ -158,6 +159,8 @@ export default {
         const user = ref()
         const passwordDialog = ref(false);
         const dataDialog = ref(false);
+        const dataUpdateError = ref(null);
+        const passwordChangeError = ref(null);
         const passwordForm = reactive({
             current_password: '',
             new_password: '',
@@ -221,12 +224,12 @@ export default {
             evt.preventDefault()
             try {
                 const res = await request('put', '/api/user-password', passwordForm)
+                passwordDialog.value = false;
             } catch (e) {
-                if (e.response.data.errors) {
-                    console.log(e)
-                }
+                console.log(e)
+                passwordChangeError.value = e.response.data
             }
-            passwordDialog.value = false;
+
         };
 
         const handleDataChange = async (evt) => {
@@ -235,13 +238,27 @@ export default {
                 const res = await request('put', '/api/user-data', dataForm)
                 user.value.name = res.data.name
                 user.value.email = res.data.email
+                dataDialog.value = false;
             } catch (e) {
-                if (e.response.data.errors) {
-                    console.log(e)
-                }
+                console.log(e)
+                dataUpdateError.value = e.response.data
             }
-            dataDialog.value = false;
         };
+
+        const resetDataUpdateForm = async () => {
+            dataDialog.value = false
+            dataUpdateError.value = null
+            dataForm.name = user.value.name
+            dataForm.email = user.value.email
+        }
+
+        const resetPasswordChangeForm = async () => {
+            passwordDialog.value = false
+            passwordChangeError.value = null
+            passwordForm.new_password = ''
+            passwordForm.confirm_password = ''
+            passwordForm.current_password = ''
+        }
 
         return {
             user,
@@ -252,8 +269,12 @@ export default {
             dataForm,
             dataDialog,
             emailRules,
+            dataUpdateError,
+            passwordChangeError,
             handlePasswordChange,
             handleDataChange,
+            resetDataUpdateForm,
+            resetPasswordChangeForm,
         }
     }
 }
