@@ -36,6 +36,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // user's endpoints
     Route::post('/favorites/{businessId}', [FavouriteController::class, 'addToFavorites'])->middleware('restrictRole:user');
+    Route::get('/user-details', [AuthController::class, 'userDetails'])->middleware('restrictRole:user');
     Route::delete('/favorites/{businessId}', [FavouriteController::class, 'removeFromFavorites'])->middleware('restrictRole:user');
     Route::get('/favorites', [FavouriteController::class, 'getFavorites'])->middleware('restrictRole:user');
 

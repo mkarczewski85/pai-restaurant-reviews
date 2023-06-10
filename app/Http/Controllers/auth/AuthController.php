@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\auth;
 
 
+use App\Models\Favourite;
+use App\Models\Review;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
@@ -55,6 +58,13 @@ class AuthController extends Controller
         }
     }
 
+    public function updateuser(Request $request, User $user)
+    {
+        $user->update($request->all());
+
+        return response()->json($user);
+    }
+
     public function loginUser(Request $request)
     {
         try {
@@ -93,5 +103,18 @@ class AuthController extends Controller
                 'message' => $th->getMessage()
             ], 500);
         }
+    }
+
+    public function userDetails()
+    {
+        $user = Auth::user();
+
+        $user->review_stats = Review::select(DB::raw('count(*) as reviews_count, sum(likes_count) as likes_count'))
+            ->where('user_id', $user->id)
+            ->groupBy('user_id')
+            ->first();
+        $user->review_stats->count_favorites = Favourite::where('user_id', $user->id)->count();
+        $user->review_stats->likes_count = intval($user->review_stats->likes_count);
+        return $user;
     }
 }

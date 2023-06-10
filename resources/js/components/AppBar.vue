@@ -18,15 +18,11 @@
                     <v-icon>mdi-heart</v-icon>
                 </v-btn>
             </router-link>
-            <v-btn icon v-if="handleSearch">
-                <v-icon>mdi-magnify</v-icon>
-            </v-btn>
-            <v-btn icon v-if="handleFilter">
-                <v-icon>mdi-filter</v-icon>
-            </v-btn>
-            <v-btn icon>
-                <v-icon>mdi-account</v-icon>
-            </v-btn>
+            <router-link to="/account">
+                <v-btn icon>
+                    <v-icon>mdi-account</v-icon>
+                </v-btn>
+            </router-link>
             <v-btn icon @click="handleLogout">
                 <v-icon> mdi-logout</v-icon>
             </v-btn>

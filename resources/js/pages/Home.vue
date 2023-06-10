@@ -1,5 +1,25 @@
 <template>
     <v-container style="overflow-y: hidden" class="mt-10">
+
+        <v-card
+            class="pa-4"
+            flat
+            height="150px"
+        >
+
+                <v-text-field
+                    hide-details
+                    prepend-icon="mdi-magnify"
+                    single-line
+                    clearable="true"
+                    onsubmit="searchFor"
+                    on-click:clear="resetResult"
+                    class="mt-5"
+                ></v-text-field>
+
+
+        </v-card>
+
         <v-infinite-scroll mode="manual" @load="load" style="overflow-x: hidden;">
             <v-row align="center">
                 <v-col v-for="business in businesses" :key="business.id" cols="4">
@@ -46,7 +66,6 @@ export default {
     }),
 
     setup() {
-        const user = ref()
         const businesses = ref([])
         const isLoading = ref()
         const limit = ref(10)
@@ -54,19 +73,8 @@ export default {
 
         let router = useRouter();
         onMounted(() => {
-            authentication()
             retrieveBusinesses()
         });
-
-        const authentication = async () => {
-            isLoading.value = true
-            try {
-                const res = await request('get', '/api/user')
-                user.value = res.data
-            } catch (e) {
-                await router.push('/')
-            }
-        }
 
         const retrieveBusinesses = async (done) => {
             isLoading.value = true
@@ -111,7 +119,6 @@ export default {
         }
 
         return {
-            user,
             businesses,
             isLoading,
             handleLogout,
