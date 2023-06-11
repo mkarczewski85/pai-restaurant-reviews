@@ -8,6 +8,7 @@ use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class ReviewController extends Controller
 {
@@ -19,12 +20,20 @@ class ReviewController extends Controller
     public function getBusinessReviews(Request $request, $businessId)
     {
         $user = Auth::user();
+        $validator = Validator::make($request->all(), [
+            'limit' => 'required|numeric',
+            'offset' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            abort(404);
+        }
+
         $limit = $request->limit;
         $offset = $request->offset;
 
         $data = Review::join('users', 'reviews.user_id', '=', 'users.id')
-            ->leftJoin('review_likes', function($join) use ($user)
-            {
+            ->leftJoin('review_likes', function ($join) use ($user) {
                 $join->on('review_likes.review_id', '=', 'reviews.id');
                 $join->on('review_likes.user_id', '=', DB::raw($user->id));
             })
@@ -37,8 +46,7 @@ class ReviewController extends Controller
             ->take($limit)
             ->get();
 
-        foreach ($data as &$item)
-        {
+        foreach ($data as &$item) {
             $item['is_liked'] = boolval($item['is_liked']);
         }
         return json_encode($data);
@@ -60,18 +68,18 @@ class ReviewController extends Controller
 
     public function storeMyReview(Request $request, $businessId)
     {
-        // create new Review.vue
-
-        // retrieve logged user context data and set user_id
         $user = Auth::user();
-
-        // find Business and set business_id or throw ex if not exists
         $business = Business::findOrFail($businessId);
-
-        // fill input fields for Review
         $input = $request->all();
 
-        // save Review
+        $review = Review::where('business_id', $businessId)->where('user_id', $user->id)->first();
+        if ($review != null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Opublikowałeś już swoją recenzję'
+            ], 405);
+        }
+
         $review = Review::create([
             'user_id' => $user->id,
             'business_id' => $business->id,
