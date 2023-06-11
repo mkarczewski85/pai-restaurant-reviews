@@ -1,12 +1,12 @@
 <template>
     <v-container style="overflow-y: hidden" class="mt-10">
 
-        <v-card
-            class="pa-4"
-            flat
-            height="150px"
-        >
-
+<!--        TODO: implement search-->
+<!--        <v-card-->
+<!--            class="pa-4"-->
+<!--            flat-->
+<!--            height="150px"-->
+<!--        >-->
 <!--                <v-text-field-->
 <!--                    hide-details-->
 <!--                    prepend-icon="mdi-magnify"-->
@@ -16,9 +16,7 @@
 <!--                    on-click:clear="resetResult"-->
 <!--                    class="mt-5"-->
 <!--                ></v-text-field>-->
-
-
-        </v-card>
+<!--        </v-card>-->
 
         <v-infinite-scroll mode="manual" @load="load" style="overflow-x: hidden;">
             <v-row align="center">
