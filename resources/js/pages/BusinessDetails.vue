@@ -1,6 +1,6 @@
 <template>
     <v-container style="overflow-y: auto;">
-        <BusinessDetailsCard v-if="businessDetails != null" :businessDetails="businessDetails" :loading="isLoading"></BusinessDetailsCard>
+        <BusinessDetailsCard v-if="businessDetails" :businessDetails="businessDetails" :loading="isLoading"></BusinessDetailsCard>
 
         <MyReview :myReview="myReview" :deleteFunction="deleteMyReview" v-if="myReview"></MyReview>
         <v-sheet

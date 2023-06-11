@@ -1,6 +1,6 @@
 <template>
     <v-container style="overflow-y: auto;" class="mt-15">
-        <v-card>
+        <v-card v-if="user">
             <v-list lines="two" subheader>
                 <v-list-subheader>Dane rejestracyjne</v-list-subheader>
                 <v-list-item title="Imię:" :subtitle="user.name"></v-list-item>
