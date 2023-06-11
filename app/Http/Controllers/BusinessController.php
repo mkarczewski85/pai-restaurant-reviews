@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Business;
-use App\Models\BusinessCategory;
 use App\Models\Favourite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use function MongoDB\BSON\toJSON;
+use Illuminate\Support\Facades\Validator;
 
 class BusinessController extends Controller
 {
@@ -18,6 +16,15 @@ class BusinessController extends Controller
         $user = Auth::user();
         $limit = $request->limit;
         $offset = $request->offset;
+
+        $validator = Validator::make($request->all(), [
+            'limit' => 'required|numeric',
+            'offset' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            abort(404);
+        }
 
         $data = Business::join('business_categories', 'businesses.business_category_id', '=', 'business_categories.id')
             ->leftJoin('favourites', function ($join) use ($user) {

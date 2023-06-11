@@ -8,6 +8,7 @@ use App\Models\Favourite;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class FavouriteController extends Controller
 {
@@ -38,6 +39,16 @@ class FavouriteController extends Controller
         $user = Auth::user();
         $limit = $request->limit;
         $offset = $request->offset;
+
+        $validator = Validator::make($request->all(), [
+            'limit' => 'required|numeric',
+            'offset' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            abort(404);
+        }
+
         $data = Business::join('favourites', 'businesses.id', '=', 'favourites.business_id')
             ->where('user_id', $user->id)
             ->selectRaw('businesses.*, true as is_favorite')
