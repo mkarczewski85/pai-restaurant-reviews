@@ -70,6 +70,16 @@ class ReviewController extends Controller
     {
         $user = Auth::user();
         $business = Business::findOrFail($businessId);
+
+        $validator = Validator::make($request->all(), [
+            'rating' => 'required|numeric',
+            'review_text' => 'required|max:2500',
+        ]);
+
+        if ($validator->fails()) {
+            abort(404);
+        }
+
         $input = $request->all();
 
         $review = Review::where('business_id', $businessId)->where('user_id', $user->id)->first();
