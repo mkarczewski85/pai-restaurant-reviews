@@ -62,7 +62,6 @@ export default {
 
     data: () => ({
         loading: false,
-        selection: 1,
     }),
 
     setup() {

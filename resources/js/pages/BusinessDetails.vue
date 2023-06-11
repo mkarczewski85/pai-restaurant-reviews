@@ -1,6 +1,6 @@
 <template>
     <v-container style="overflow-y: auto;">
-        <BusinessDetailsCard :businessDetails="businessDetails" :loading="loading"></BusinessDetailsCard>
+        <BusinessDetailsCard v-if="businessDetails != null" :businessDetails="businessDetails" :loading="isLoading"></BusinessDetailsCard>
 
         <MyReview :myReview="myReview" :deleteFunction="deleteMyReview" v-if="myReview"></MyReview>
         <v-sheet
@@ -65,16 +65,11 @@ export default {
         AppBar,
     },
 
-    data: () => ({
-        loading: false,
-        selection: 1,
-    }),
-
     setup() {
         const dialog = ref(false)
         const reviews = ref([])
         const myReview = ref()
-        const businessDetails = ref()
+        const businessDetails = ref(null)
         const isLoading = ref()
         const limit = ref(10)
         const offset = ref(0)
@@ -89,10 +84,8 @@ export default {
         });
 
         const retrieveReviews = async (done) => {
-            isLoading.value = true
             try {
                 const res = await request('get', '/api/businesses/' + id + '/reviews' + '?limit=' + limit.value + '&offset=' + offset.value)
-
                 if (res.data.length) {
                     reviews.value.push(...res.data)
                     done('ok')
@@ -100,7 +93,6 @@ export default {
                 } else {
                     done('empty')
                 }
-
             } catch (e) {
                 console.log(e)
                 done('error')
@@ -113,6 +105,7 @@ export default {
             try {
                 const res = await request('get', '/api/businesses/' + id)
                 businessDetails.value = res.data
+                isLoading.value = false
             } catch (e) {
                 await router.push('/')
             }
