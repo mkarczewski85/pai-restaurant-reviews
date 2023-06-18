@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use stdClass;
 use Throwable;
 
 class AuthController extends Controller
@@ -165,12 +166,18 @@ class AuthController extends Controller
     {
         $user = Auth::user();
 
-        $user->review_stats = Review::select(DB::raw('count(*) as reviews_count, sum(likes_count) as likes_count'))
+        $review_stats = Review::select(DB::raw('count(*) as reviews_count, sum(likes_count) as likes_count'))
             ->where('user_id', $user->id)
             ->groupBy('user_id')
             ->first();
-        $user->review_stats->count_favorites = Favourite::where('user_id', $user->id)->count();
-        $user->review_stats->likes_count = intval($user->review_stats->likes_count);
+        if ($review_stats === null) {
+            $review_stats = new stdClass();
+            $review_stats->reviews_count = 0;
+            $review_stats->likes_count = 0;
+        }
+        $review_stats->count_favorites = Favourite::where('user_id', $user->id)->count();
+        $review_stats->likes_count = intval($review_stats->likes_count);
+        $user->review_stats = $review_stats;
         return $user;
     }
 }
